@@ -1,0 +1,1 @@
+import 'dotenv/config';import {app} from './app';import {prisma} from './lib/prisma';const port=Number(process.env.PORT)||3000;const server=app.listen(port,()=>console.log(`DevShowcase API: http://localhost:${port}`));async function stop(){await prisma.$disconnect();server.close(()=>process.exit(0))}process.on('SIGINT',stop);process.on('SIGTERM',stop);
