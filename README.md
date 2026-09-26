@@ -1,36 +1,95 @@
-# DevShowcase API
-Backend acadêmico com Node.js, Express, TypeScript, Prisma, SQLite e Zod.
+# DevShowcase API — Atividade 2
+Backend acadêmico com Node.js, Express, TypeScript, Prisma, PostgreSQL e Zod.
 
-## Modelo
+## Requisitos implementados
 - Profile 1:N Project
 - Project N:N Technology
 - Project 1:N Feedback
+- Feedback com nota de 1 a 5 e recálculo da média do projeto
+- Upvote incremental em projetos
+- Listagem de projetos com filtro por tecnologia e paginação
+- Tratamento global de erros (400, 404, 409, 500 e validações Zod)
+- Documentação OpenAPI/Swagger em `/docs`
+- Configuração para PostgreSQL e deploy em PaaS (Render)
 
-## Executar
+## Variáveis de ambiente
+Copie `.env.example` para `.env` e configure uma URL PostgreSQL real:
+
+```env
+DATABASE_URL="postgresql://USER:PASSWORD@HOST:5432/DATABASE?schema=public"
+PORT=3000
+```
+
+Nunca envie o arquivo `.env` ao GitHub.
+
+## Instalação e execução
 ```bash
 npm install
-copy .env.example .env
 npx prisma generate
-npx prisma migrate dev --name init
+npx prisma migrate deploy
+npm run build
 npm run dev
 ```
-Teste `GET http://localhost:3000/health`.
 
-## Endpoints obrigatórios
-- POST `/api/profiles` — body: `{"name":"Victor Manuel","email":"victor@example.com","bio":"Desenvolvedor em formação"}`
-- GET `/api/profiles/1`
-- POST `/api/technologies` — body: `{"name":"React"}`
+- Saúde: `GET /health`
+- Swagger: `GET /docs`
+- OpenAPI JSON: `GET /openapi.json`
+
+## Endpoints da etapa anterior
+- POST `/api/profiles`
+- GET `/api/profiles/:id`
+- POST `/api/technologies`
 - GET `/api/technologies`
-- POST `/api/projects` — body: `{"title":"SIGEC","description":"Sistema Integrado de Gestão Comercial","repositoryUrl":"https://github.com/CharlesDEV7/SIGEC","profileId":1,"technologyIds":[1]}`
+- POST `/api/projects`
 - GET `/api/projects`
 
-POSTs válidos retornam 201. Validação retorna 400; recurso inexistente 404; duplicidade 409. Crie Profile e Technology antes do Project e use os IDs retornados.
+## Novos endpoints da Atividade 2
+### Feedback
+`POST /api/projects/:id/feedbacks`
+```json
+{
+  "author": "Aluno",
+  "rating": 5,
+  "comment": "Projeto muito bom"
+}
+```
+A nota aceita valores inteiros de 1 a 5. Após o cadastro, a média (`averageRating`) do projeto é recalculada.
 
-## Validações para demonstrar no Postman
-- Profile: e-mail inválido -> 400.
-- Technology: nome vazio -> 400.
-- Project: título vazio ou repositoryUrl inválida -> 400.
-- Project: profileId inexistente -> 404.
-- Project: technologyIds inexistentes -> 400.
+### Upvote
+`PUT /api/projects/:id/upvote`
+Incrementa `upvotes` em 1.
 
-Arquitetura: routes -> controllers -> services -> repositories -> Prisma -> SQLite. Feedback está modelado e possui repository; o enunciado desta etapa não exige endpoint de Feedback.
+### Filtro e paginação
+`GET /api/projects?page=1&limit=10`
+
+Filtro opcional por tecnologia:
+`GET /api/projects?technology=React&page=1&limit=10`
+
+Resposta inclui `data` e metadados em `pagination`.
+
+## Teste de erro 400 para o vídeo
+Envie uma nota fora do intervalo:
+```json
+{
+  "author": "Teste",
+  "rating": 6,
+  "comment": "Nota inválida"
+}
+```
+A API deve responder `400 Bad Request` pelo manipulador global.
+
+## Deploy no Render
+1. Crie/provisione um PostgreSQL em nuvem (Supabase ou Render PostgreSQL).
+2. No serviço Web do Render, conecte este repositório GitHub.
+3. Configure `DATABASE_URL` nas Environment Variables.
+4. Build Command sugerido:
+   `npm install && npx prisma generate && npx prisma migrate deploy && npm run build`
+5. Start Command:
+   `npm start`
+6. Após o deploy, valide `/health`, `/docs` e os endpoints públicos no Postman.
+
+## Entrega
+O PDF final deve conter 3 links:
+1. Repositório GitHub.
+2. URL pública da API em produção.
+3. Vídeo não listado no YouTube (5–8 minutos).
