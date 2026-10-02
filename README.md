@@ -1,4 +1,4 @@
-# DevShowcase API — Atividade 2
+# DevShowcase API —
 Backend acadêmico com Node.js, Express, TypeScript, Prisma, PostgreSQL e Zod.
 
 ## Requisitos implementados
