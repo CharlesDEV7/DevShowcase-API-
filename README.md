@@ -43,7 +43,7 @@ npm run dev
 - POST `/api/projects`
 - GET `/api/projects`
 
-## Novos endpoints da Atividade 2
+## Novos endpoints
 ### Feedback
 `POST /api/projects/:id/feedbacks`
 ```json
@@ -88,8 +88,4 @@ A API deve responder `400 Bad Request` pelo manipulador global.
    `npm start`
 6. Após o deploy, valide `/health`, `/docs` e os endpoints públicos no Postman.
 
-## Entrega
-O PDF final deve conter 3 links:
-1. Repositório GitHub.
-2. URL pública da API em produção.
-3. Vídeo não listado no YouTube (5–8 minutos).
+
